@@ -42,9 +42,6 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	/* ensure BPF program only handles write() syscalls from our process */
-	skel->bss->my_pid = getpid();
-
 	/* Attach tracepoint handler */
 	err = minimal_bpf__attach(skel);
 	if (err) {

@@ -1,21 +1,16 @@
-// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
-/* Copyright (c) 2020 Facebook */
+/* SPDX-License-Identifier: GPL-2.0-only */
+
 #include <linux/bpf.h>
 #include <bpf/bpf_helpers.h>
+#include <bpf/bpf_tracing.h>
 
-char LICENSE[] SEC("license") = "Dual BSD/GPL";
+struct file;
 
-int my_pid = 0;
-
-SEC("tp/syscalls/sys_enter_write")
-int handle_tp(void *ctx)
+SEC("lsm/file_open")
+int BPF_PROG(restrict_filesystems, struct file *file, int ret)
 {
-	int pid = bpf_get_current_pid_tgid() >> 32;
-
-	if (pid != my_pid)
-		return 0;
-
-	bpf_printk("BPF triggered from PID %d.\n", pid);
-
-	return 0;
+        bpf_printk("file opened\n");
+        return 0;
 }
+
+char _license[] SEC("license") = "GPL";
